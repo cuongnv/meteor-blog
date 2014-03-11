@@ -1,49 +1,37 @@
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Nguyễn Văn Cường - Nothing Is Impossible</title>
-<link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
-<meta name="viewport" content="width=device-width">
-<link rel="stylesheet" href="/css/main.css" type="text/css">
-<link rel="stylesheet" href="/css/custom.css" type="text/css" media="screen,projection,tv,print" charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Nguyễn Văn Cường - Nothing Is Impossible</title>
+	<link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+	<meta name="viewport" content="width=device-width">
+	<link rel="stylesheet" href="/css/main.css" type="text/css">
+	<link rel="stylesheet" href="/css/custom.css" type="text/css" media="screen,projection,tv,print" charset="utf-8">
+	<!-- Ghosty-ness markdowny-ness --->
+	<script src="/cgeditor/jquery.cgeditor.js"></script>	
+	<link rel="stylesheet" type="text/css" href="/cgeditor/css/demo.css">
+	<link rel="stylesheet" type="text/css" href="/cgeditor/css/code.css">
+	<link rel="stylesheet" type="text/css" href="/cgeditor/css/default.min.css">
+	<link href="/cgeditor/css/ghostdown.css" media="all" rel="stylesheet">
 </head>
-<body>
-<div id="wrap0">
+
+<!-- template -->
+<template name="layout">
+  <div id="wrap0">
 	<div id="wrap1">
 		<div id="wrap2">
 			<div id="wrap3">
 				<div id="header">
 					<a href="/" id="logo" tabindex="0">
-						<img src="/imgs/myo-icon.png" alt="" width="32" height="35">
-						<span id="site-title">My Blog</span>
+						<img src="/imgs/logo.png" alt="" width="35" height="35">
+						<span id="site-title">Share to be shared</span>
 					</a>
-					<div id="nav" role="navigation">
-						<ul role="menubar">
-							<li role="menuitem" aria-haspopup="true" class="menu-community">
-								<a href="/community/explore/" tabindex="0">Community</a>
-								<ul role="menu" id="menu-community">
-									<li role="menuitem"><a href="/community/explore/" tabindex="0">News</a></li>
-									<li role="menuitem"><a href="/community/blogs" tabindex="0">Blogs</a></li>
-									<li role="menuitem"><a href="/community/photos" tabindex="0">Photos</a></li>
-									<li role="menuitem"><a href="/community/members" tabindex="0">Members</a></li>
-									<li role="menuitem"><a href="/community/groups/" tabindex="0">Groups</a></li>
-								</ul>
-							</li>
-							<li role="menuitem" aria-haspopup="true" class="menu-opera">
-								<a href="/chooseopera/" tabindex="0">Opera</a>
-								<ul role="menu" id="menu-opera">
-									<li role="menuitem"><a href="/chooseopera/">Opera news</a></li>
-									<li role="menuitem"><a href="/community/forums/">Forums</a></li>
-									<li role="menuitem"><a href="https://my.opera.com/community/operalink/" tabindex="0">Opera Link</a></li>
-									<li role="menuitem"><a href="/community/customize/skins/">Themes</a></li>
-								</ul>
-							</li>
-						</ul>
-					</div>
 					<ul id="loginsignup">
-						<li style="visibility:hidden">
-							<a href="#">Sign up</a>
+						<li>
+							{{#if currentUser}}
+								<button id="btn-logout" class="btn">{{currentUser.username}}</button>
+							{{else}}
+								<button id="btn-login" class="btn">Log In</button>
+							{{/if}}
 						</li>
-						<li>{{loginButtons}}</li>
 					</ul>
 				</div>
 				<div id="wrap4">
@@ -55,14 +43,19 @@
 						</div>
 						<div id="menu">
 							<ul>
-								<li id="menu_blog"><a href=# id="selected"><span>Blog</span></a></li>
-								<li id="menu_friends"><a href="#"><span>Friends</span></a></li>
-								<li id="menu_about"><a href="#"><span>About</span></a></li>
+								<li id="menu_blog"><a href="/"><span>Home</span></a></li>
+								<!-- <li id="menu_friends"><a href="#"><span>Friends</span></a></li>
+								-->
+								{{#if currentUser}}
+								<li id="menu_about"><a href="/post"><span>Create new post</span></a></li>
+								<li id="menu_about"><a href="/admin"><span>Admin</span></a></li>
+								{{/if}}
+								<li id="menu_about"><a href="/about"><span>About</span></a></li> 
 							</ul>
 						</div>
 					</div>
 					<div id="content" class="blogfront">
-						{{renderPage}}
+						{{yield}}
 						<div id="footer">
 							<div id="footer2">
 								<p><a href="#">Help/FAQ</a> | <a href="#" class="black">Terms</a>| <a href="#"><acronym title="Friend of a friend">FOAF</acronym></a></p>
@@ -75,8 +68,46 @@
 		</div>
 	</div>
 </div>
-</body>
-<!-- Define template here -->
+</template>
+
+<template name="create_post">
+	<h2>Add new post</h2>
+	<br>
+	<div>
+		Title: <input type="text" size="40" name="ptitle" id="ptitle"/> 
+		<button id="btn-save" class="btn">Publish</button>
+		<button id="btn-saveasdraft" class="btn">Save as draft</button>
+	</div>
+	<div class="features">
+		<section class="editor">
+			<div class="outer">
+				<div class="editorwrap">
+					<section class="entry-markdown">
+						<header class="floatingheader">
+							&nbsp;&nbsp; Markdown 
+						</header>
+						<section class="entry-markdown-content">
+						<textarea id="entry-markdown"></textarea>
+						</section>
+					</section>
+					<section class="entry-preview active">
+						<header class="floatingheader">
+						  &nbsp;&nbsp; Preview <span class="entry-word-count"></span>
+						</header>
+						<section class="entry-preview-content">
+							<div class="rendered-markdown"></div>
+						</section>
+					</section>
+				</div>
+			</div>
+		</section>
+		<br/>
+		Tags: <input type="text" size="40" name="ptag" id="ptag">
+		Each tag is separated by comma
+	</div>
+	
+</template>
+
 
 <template name="listpost">
 <div id="mainwrap">
@@ -210,14 +241,13 @@
 </template>
 
 <template name="postdetail">
-{{#with post}}
 <div id="mainwrap">
 	<div id="main">
-		<div id="{{post_id}}" class="post">
-			<h2 class="title">{{post_title}}</h2>
-			<p class="postdate">{{post_datetime}}</p>
+		<div id="{{_id}}" class="post">
+			<h2 class="title">{{title}}</h2>
+			<p class="postdate">{{created_time}}</p>
 			<div class="content">
-			{{{post_content}}}
+			{{{content}}}
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -239,7 +269,6 @@
 		</div>
 	</div>
 </div>
-{{/with}}
 {{>sidebar}}
 </template>
 
@@ -257,9 +286,8 @@
 			<input type="password" required="required" id="password" name="passwd">
 		</fieldset>
 		<fieldset>
-			<label class="check" for="rememberme">
-			<input type="checkbox" checked="" id="rememberme" value="1" name="remember"> Remember</label>
-			<button type="submit">Log in</button>
+			<button type="submit" class="btn" id="btn-login"> Log in</button>
+			<button type="submit" class="btn" id="btn-register"> Create Account</button>
 		</fieldset>
 	</form>
 </section>
@@ -277,4 +305,7 @@
 
 <template name="admin">
 	<h1>Administrator</h1>
+</template>
+<template name="about">
+Nothing ^^
 </template>

@@ -5,10 +5,11 @@
 
 standard-app-packages
 preserve-inputs
-backbone
-router
-accounts-ui
 jquery
-accounts-password
 force-ssl
-autopublish
+iron-router
+bootstrap
+accounts-base
+accounts-password
+event-hooks
+underscore
