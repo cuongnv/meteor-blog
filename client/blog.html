@@ -1,0 +1,280 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Nguyễn Văn Cường - Nothing Is Impossible</title>
+<link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="/css/main.css" type="text/css">
+<link rel="stylesheet" href="/css/custom.css" type="text/css" media="screen,projection,tv,print" charset="utf-8">
+</head>
+<body>
+<div id="wrap0">
+	<div id="wrap1">
+		<div id="wrap2">
+			<div id="wrap3">
+				<div id="header">
+					<a href="/" id="logo" tabindex="0">
+						<img src="/imgs/myo-icon.png" alt="" width="32" height="35">
+						<span id="site-title">My Blog</span>
+					</a>
+					<div id="nav" role="navigation">
+						<ul role="menubar">
+							<li role="menuitem" aria-haspopup="true" class="menu-community">
+								<a href="/community/explore/" tabindex="0">Community</a>
+								<ul role="menu" id="menu-community">
+									<li role="menuitem"><a href="/community/explore/" tabindex="0">News</a></li>
+									<li role="menuitem"><a href="/community/blogs" tabindex="0">Blogs</a></li>
+									<li role="menuitem"><a href="/community/photos" tabindex="0">Photos</a></li>
+									<li role="menuitem"><a href="/community/members" tabindex="0">Members</a></li>
+									<li role="menuitem"><a href="/community/groups/" tabindex="0">Groups</a></li>
+								</ul>
+							</li>
+							<li role="menuitem" aria-haspopup="true" class="menu-opera">
+								<a href="/chooseopera/" tabindex="0">Opera</a>
+								<ul role="menu" id="menu-opera">
+									<li role="menuitem"><a href="/chooseopera/">Opera news</a></li>
+									<li role="menuitem"><a href="/community/forums/">Forums</a></li>
+									<li role="menuitem"><a href="https://my.opera.com/community/operalink/" tabindex="0">Opera Link</a></li>
+									<li role="menuitem"><a href="/community/customize/skins/">Themes</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<ul id="loginsignup">
+						<li style="visibility:hidden">
+							<a href="#">Sign up</a>
+						</li>
+						<li>{{loginButtons}}</li>
+					</ul>
+				</div>
+				<div id="wrap4">
+					<div id="top" class="top-blog">
+						<div id="top2">
+							<h1><span>Nothing Is Impossible</span></h1>
+								<p id="subtitle"><span>-Klark Kent-</span>
+							</p>
+						</div>
+						<div id="menu">
+							<ul>
+								<li id="menu_blog"><a href=# id="selected"><span>Blog</span></a></li>
+								<li id="menu_friends"><a href="#"><span>Friends</span></a></li>
+								<li id="menu_about"><a href="#"><span>About</span></a></li>
+							</ul>
+						</div>
+					</div>
+					<div id="content" class="blogfront">
+						{{renderPage}}
+						<div id="footer">
+							<div id="footer2">
+								<p><a href="#">Help/FAQ</a> | <a href="#" class="black">Terms</a>| <a href="#"><acronym title="Friend of a friend">FOAF</acronym></a></p>
+								<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<!-- Define template here -->
+
+<template name="listpost">
+<div id="mainwrap">
+	<div id="main">
+	{{#each posts}}
+      {{> post}}
+    {{/each}}
+    </div>
+</div>
+{{>sidebar}}
+</template>
+
+<template name="not_found">
+<h1>Not found page! :(</h1>
+</template>
+
+<template name="sidebar">
+<div id="sidewrap">
+		<div id="side">
+			<div class="sidebox" id="qp">
+				<h2>Nguyễn Văn Cường</h2>
+				<div id="myphoto">
+					<a href="/cuongnvbkict/">
+						<img src="/imgs/avatar.png" width="220" height="165" alt="photo"></a>
+				</div>
+			</div>
+			<div id="blogsearch" class="sidebox">
+				<label for="searchbox" class="h2">Blog search</label>
+				<form action="/cuongnvbkict/search/?" method="get">
+					<div class="pad">
+						<input type="text" name="search" value="" id="searchbox" maxlength="128">
+						<input type="submit" value="search" id="submitsearch">
+					</div>
+				</form>
+			</div>
+			<div class="sidebox" id="friendz">
+				<h2>Friends (2)</h2>
+				<div class="pad">
+					<ul class="userlist nobullets">
+						<li class="first">
+							<a href="/phdai/">
+								<img src="/imgs/avatar.png" width="104" height="78" alt="phdai photo" title="phdai ">
+								<span class="block">phdai</span>
+							</a>
+						</li>
+						<li>
+							<a href="/clbdiemtua/">
+								<img src="/imgs/avatar.png" width="104" height="78" alt="clbdiemtua photo" title="clbdiemtua ">
+								<span class="block">clbdiemtua</span>
+							</a>
+						</li>
+					</ul>
+					<p><b><a href="/cuongnvbkict/friends/">Show all friends</a></b></p>
+				</div>
+			</div>
+			<table id="calendar">
+				<caption><a href="/cuongnvbkict/archive/monthly/?month=201402" id="calendarmonth">February 2014</a></caption>
+				<thead>
+					<tr>
+						<th scope="col" title="Monday" abbr="Monday">M</th>
+						<th scope="col" title="Tuesday" abbr="Tuesday">T</th>
+						<th scope="col" title="Wednesday" abbr="Wednesday">W</th>
+						<th scope="col" title="Thursday" abbr="Thursday">T</th>
+						<th scope="col" title="Friday" abbr="Friday">F</th>
+						<th scope="col" title="Saturday" abbr="Saturday">S</th>
+						<th scope="col" title="Sunday" abbr="Sunday">S</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td colspan="7">
+							<span id="prevmonth" class="left">
+								<img src="/imgs/prev.gif" width="9" height="8" alt="" class="arrow-prev">
+								<a href="#" title="January 2014">January 2014</a>
+							</span>
+							<span id="nextmonth" class="right">
+								<a href="#" title="March 2014">March 2014</a>
+								<img src="/imgs/next.gif" width="9" height="8" alt="" class="arrow-next">
+							</span>
+						</td>
+					</tr>
+				</tfoot>
+				<tbody>
+					<tr><td></td><td></td><td></td><td></td><td></td><td>1</td><td>2</td></tr>
+					<tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+					<tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+					<tr><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
+					<tr><td class="l"><a href="#">24</a></td><td>25</td><td>26</td><td>27</td><td>28</td><td></td><td></td></tr>
+				</tbody>
+			</table>
+			<div class="sidebox" id="tagcloud">
+				<h2>Tags</h2>
+				<div class="pad">
+					<ul class="nobullets clearfix">
+						<li class="size1"><a href="#" rel="tag">Apache</a></li>
+						<li class="size1"><a href="#" rel="tag">Giải thuật</a></li>
+						<li class="size1"><a href="#" rel="tag">html</a></li>
+						<li class="size1"><a href="#" rel="tag">PHP</a></li>
+						<li class="size1"><a href="#" rel="tag">truyện hài</a></li>
+						<li class="size1"><a href="#" rel="tag">virtualhost</a></li>
+						<li class="size1"><a href="#" rel="tag">Vui vui</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="post">
+<div class="post" id="{{post_id}}">
+	<h2 class="title">
+		<a href="{{post_url}}">{{post_title}}</a>
+	</h2>
+	<p class="postdate">
+		<a href="{{post_url}}" title="Permanent link">{{post_datetime}}</a>
+	</p>
+	<div class="content">{{{post_content}}}</div>
+	<p class="postinfo">
+		<img src="/imgs/comment.gif" width="12" height="10" alt=""> 
+		<span class="postcomments">
+			<a href="#">
+			{{#if post_num_of_comments}}
+				{{post_num_of_comments}}
+			{{else}}
+				No commemt
+			{{/if}}
+			</a>
+		</span>
+	</p>
+</div>
+</template>
+
+<template name="postdetail">
+{{#with post}}
+<div id="mainwrap">
+	<div id="main">
+		<div id="{{post_id}}" class="post">
+			<h2 class="title">{{post_title}}</h2>
+			<p class="postdate">{{post_datetime}}</p>
+			<div class="content">
+			{{{post_content}}}
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="w100" id="newcomment">
+			<h3>Write a comment</h3>
+			<form id="addcomment" name="addcomment" method="post" action="#">
+				<div class="avatar">
+					<a href="/cuongnvbkict/"><img width="50" height="50" alt="" src="/imgs/avatar.png"></a>
+				</div>
+				<div class="addcomment">
+					<textarea rows="6" cols="40" id="comment" name="comment"></textarea>
+					<div id="addsmilies">
+						<img width="24" height="22" style="display:block;" id="addsmile" title="Smilies" alt="Smilies" src="/imgs/ui_smilies.gif">
+					</div>
+					<input type="submit" accesskey="s" value=" Post comment " name="submit" class="submit">
+				</div>
+				<div class="clear"></div>
+			</form>
+		</div>
+	</div>
+</div>
+{{/with}}
+{{>sidebar}}
+</template>
+
+<template name="login">
+
+<section>
+	<h1>
+           Login to My Blog
+       </h1>
+	<form name="mainlogin" method="post" action="#">
+		<fieldset>
+			<label for="username">Username</label>
+			<input type="text" autofocus="autofocus" value="" required="required" id="username" name="user">
+			<label for="password">Password</label>
+			<input type="password" required="required" id="password" name="passwd">
+		</fieldset>
+		<fieldset>
+			<label class="check" for="rememberme">
+			<input type="checkbox" checked="" id="rememberme" value="1" name="remember"> Remember</label>
+			<button type="submit">Log in</button>
+		</fieldset>
+	</form>
+</section>
+</template>
+
+
+<template name="sidebox">
+<div class="sidebox" id="{{sidebox_id}}">
+	<h2>{{sidebox_title}}</h2>
+	<div class="pad">
+		{{sidebox_content}}
+	</div>
+</div>
+</template>
+
+<template name="admin">
+	<h1>Administrator</h1>
+</template>
