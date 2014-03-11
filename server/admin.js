@@ -7,5 +7,10 @@ Hooks.onLoggedIn = function(userId){
 	}
 }
 Meteor.publish("posts", function(){
-	return Post.find({$or:[{"publish":true}]});
+	if(this.userId == null){
+		return Post.find({$or:[{"publish":true}]});
+	}else{
+		return Post.find({});
+	}
+	
 });

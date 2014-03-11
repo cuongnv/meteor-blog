@@ -23,14 +23,14 @@ Router.map(function(){
 		path:'/',
 		template:'listpost',
 		data:function(){
-			posts = Post.find({},{limit:5});
+			posts = Post.find({publish:true},{limit:5});
 			listpost = [];
 			posts.forEach(function(post){
 				listpost.push({
 					post_id:post._id,
 					post_url:"/post/" + post._id,
 					post_title:post.title,
-					post_datetime:post.created_time,
+					post_datetime:new Date(post.created_time),
 					post_content:post.content,
 					post_num_of_comments:post.comment.length
 				});
@@ -54,6 +54,54 @@ Router.map(function(){
 		path:'/post/:id',
 		template:'postdetail',
 		data:function(){
+			var p = Post.findOne({_id:this.params.id, publish:true}, {fields: {title:1, content:1, created_time:1}});
+			return {
+				title:p.title,
+				content:p.content,
+				created_time:new Date(p.created_time),
+				_id:p._id
+			};
+		}
+	});
+	this.route('login', {
+		path:'/login',
+		template:'login',
+		before:function(){
+			if(Meteor.user() != null){
+				this.redirect('/');
+			}
+		}
+	});
+	this.route('admin',{
+		path:'/admin',
+		template:'admin',
+		before:function(){
+			if(Meteor.user() == null){
+				this.redirect('login');
+			}
+			this.subscribe('allposts');
+		},
+		data:function(){
+			posts = Post.find({}, {fields: {title:1, created_time:1, publish:1}}).fetch();
+			i = 1;
+			_.each(posts, function(p){
+				p.no = i++; 
+				p.created_time = new Date(p.created_time);
+			});
+			return {posts:posts};
+		}
+	});
+	this.route('admin_publish',{
+		path:'/admin/publish/:id',
+		action:function(){
+			publishPost(this.params.id);
+			this.redirect('/admin');
+		}
+	});
+	this.route('admin_view',{
+		path:'/admin/view/:id',
+		template:'postdetail',
+		data:function(){
 			var p = Post.findOne({_id:this.params.id}, {fields: {title:1, content:1, created_time:1}});
 			return {
 				title:p.title,
@@ -63,23 +111,25 @@ Router.map(function(){
 			};
 		}
 	});
-	this.route('login', {
-		path:'/login',
-		template:'login',
-		before:[function(){
-			if(Meteor.user() != null){
-				this.redirect('/');
+	this.route('admin_delete', {
+		path:'/admin/delete/:id',
+		action:function(){
+			result = confirm('Do you want to delete this post?');
+			if(result){
+				//delete post
+				deletePost(this.params.id);
 			}
-		}]
+			this.redirect('/admin');
+		}
 	});
-	this.route('admin',{
-		path:'/admin',
-		template:'admin',
-		before:[function(){
-			if(Meteor.user() == null){
-				this.redirect('login');
-			}
-		}],
+	this.route('admin_edit',{
+		path:'/admin/edit/:id',
+		template:'create_post',
+		data:function(){
+			p = Post.findOne({_id:this.params.id},{fields:{title:1, markdown:1, content:1, tags:1}});
+			p.tags = p.tags.join(',');
+			return p;
+		}
 	});
 	this.route('about',{
 		path:'/about',
@@ -134,34 +184,67 @@ Template.create_post.events({
 		}
 	},
 	'click button#btn-save':function(event, template){
-		if($('#ptag').val().trim() == ''){
-			id = createNewPost({
-				title:$('#ptitle').val().trim(),
-				content: $('.rendered-markdown').html().trim(),
-				markdown:$("#entry-markdown").val(),
-				tags:['uncategory'],
-				publish:true
-			});
+		if($('#pid').val().trim() == ''){
+			if($('#ptag').val().trim() == ''){
+				id = createNewPost({
+					title:$('#ptitle').val().trim(),
+					content: $('.rendered-markdown').html().trim(),
+					markdown:$("#entry-markdown").val(),
+					tags:['uncategory'],
+					publish:true
+				});
+			}else{
+				id = createNewPost({
+					title:$('#ptitle').val().trim(),
+					content: $('.rendered-markdown').html().trim(),
+					markdown:$("#entry-markdown").val(),
+					tags:$('#ptag').val().trim().split(','),
+					publish:true
+				});
+			}
+			Router.go('/');
 		}else{
-			id = createNewPost({
+			//update
+			updatePost({
 				title:$('#ptitle').val().trim(),
 				content: $('.rendered-markdown').html().trim(),
 				markdown:$("#entry-markdown").val(),
 				tags:$('#ptag').val().trim().split(','),
-				publish:true
+				publish:true,
+				_id:$('#pid').val().trim()
 			});
+			Router.go('/admin')
 		}
-//		this.redirect('/');
+		
 	},
 	'click button#btn-saveasdraft':function(e, t){
-		createNewPost({
-			title:$('#ptitle').val().trim(),
-			content: $('.rendered-markdown').html().trim(),
-			markdown:$("#entry-markdown").val(),
-			tags:$('#ptag').val().split(','),
-			publish:false
-		});
-//		Meteor.redirect('/');
+		if($('#pid').val().trim() == ''){
+			createNewPost({
+				title:$('#ptitle').val().trim(),
+				content: $('.rendered-markdown').html().trim(),
+				markdown:$("#entry-markdown").val(),
+				tags:$('#ptag').val().split(','),
+				publish:false
+			});
+			Router.go('/');
+		}else{
+			//update
+			updatePost({
+				title:$('#ptitle').val().trim(),
+				content: $('.rendered-markdown').html().trim(),
+				markdown:$("#entry-markdown").val(),
+				tags:$('#ptag').val().trim().split(','),
+				publish:false,
+				_id:$('#pid').val().trim()
+			});
+			Router.go('/admin');
+		}
 	}
 });
-
+Template.admin.events({
+	'click ul.nav li a':function(e, t){
+		e.preventDefault();
+		$('ul.nav li').removeClass('active');
+		$(e.target).parent().addClass('active');
+	}
+});

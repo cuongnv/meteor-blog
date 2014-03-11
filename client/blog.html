@@ -5,7 +5,6 @@
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" href="/css/main.css" type="text/css">
 	<link rel="stylesheet" href="/css/custom.css" type="text/css" media="screen,projection,tv,print" charset="utf-8">
-	<!-- Ghosty-ness markdowny-ness --->
 	<script src="/cgeditor/jquery.cgeditor.js"></script>	
 	<link rel="stylesheet" type="text/css" href="/cgeditor/css/demo.css">
 	<link rel="stylesheet" type="text/css" href="/cgeditor/css/code.css">
@@ -74,7 +73,8 @@
 	<h2>Add new post</h2>
 	<br>
 	<div>
-		Title: <input type="text" size="40" name="ptitle" id="ptitle"/> 
+		Title: <input class="span6" type="text" size="80" name="ptitle" id="ptitle" value="{{title}}"/> 
+		<input type="hidden" id="pid" value="{{_id}}" name="pid"/>
 		<button id="btn-save" class="btn">Publish</button>
 		<button id="btn-saveasdraft" class="btn">Save as draft</button>
 	</div>
@@ -87,7 +87,7 @@
 							&nbsp;&nbsp; Markdown 
 						</header>
 						<section class="entry-markdown-content">
-						<textarea id="entry-markdown"></textarea>
+						<textarea id="entry-markdown">{{markdown}}</textarea>
 						</section>
 					</section>
 					<section class="entry-preview active">
@@ -95,14 +95,14 @@
 						  &nbsp;&nbsp; Preview <span class="entry-word-count"></span>
 						</header>
 						<section class="entry-preview-content">
-							<div class="rendered-markdown"></div>
+							<div class="rendered-markdown">{{{content}}}</div>
 						</section>
 					</section>
 				</div>
 			</div>
 		</section>
 		<br/>
-		Tags: <input type="text" size="40" name="ptag" id="ptag">
+		Tags: <input type="text" size="40" name="ptag" id="ptag" value="{{tags}}">
 		Each tag is separated by comma
 	</div>
 	
@@ -130,88 +130,20 @@
 			<div class="sidebox" id="qp">
 				<h2>Nguyễn Văn Cường</h2>
 				<div id="myphoto">
-					<a href="/cuongnvbkict/">
+					<a href="/about">
 						<img src="/imgs/avatar.png" width="220" height="165" alt="photo"></a>
 				</div>
 			</div>
 			<div id="blogsearch" class="sidebox">
 				<label for="searchbox" class="h2">Blog search</label>
-				<form action="/cuongnvbkict/search/?" method="get">
+				<form action="" method="get">
 					<div class="pad">
 						<input type="text" name="search" value="" id="searchbox" maxlength="128">
 						<input type="submit" value="search" id="submitsearch">
 					</div>
 				</form>
 			</div>
-			<div class="sidebox" id="friendz">
-				<h2>Friends (2)</h2>
-				<div class="pad">
-					<ul class="userlist nobullets">
-						<li class="first">
-							<a href="/phdai/">
-								<img src="/imgs/avatar.png" width="104" height="78" alt="phdai photo" title="phdai ">
-								<span class="block">phdai</span>
-							</a>
-						</li>
-						<li>
-							<a href="/clbdiemtua/">
-								<img src="/imgs/avatar.png" width="104" height="78" alt="clbdiemtua photo" title="clbdiemtua ">
-								<span class="block">clbdiemtua</span>
-							</a>
-						</li>
-					</ul>
-					<p><b><a href="/cuongnvbkict/friends/">Show all friends</a></b></p>
-				</div>
-			</div>
-			<table id="calendar">
-				<caption><a href="/cuongnvbkict/archive/monthly/?month=201402" id="calendarmonth">February 2014</a></caption>
-				<thead>
-					<tr>
-						<th scope="col" title="Monday" abbr="Monday">M</th>
-						<th scope="col" title="Tuesday" abbr="Tuesday">T</th>
-						<th scope="col" title="Wednesday" abbr="Wednesday">W</th>
-						<th scope="col" title="Thursday" abbr="Thursday">T</th>
-						<th scope="col" title="Friday" abbr="Friday">F</th>
-						<th scope="col" title="Saturday" abbr="Saturday">S</th>
-						<th scope="col" title="Sunday" abbr="Sunday">S</th>
-					</tr>
-				</thead>
-				<tfoot>
-					<tr>
-						<td colspan="7">
-							<span id="prevmonth" class="left">
-								<img src="/imgs/prev.gif" width="9" height="8" alt="" class="arrow-prev">
-								<a href="#" title="January 2014">January 2014</a>
-							</span>
-							<span id="nextmonth" class="right">
-								<a href="#" title="March 2014">March 2014</a>
-								<img src="/imgs/next.gif" width="9" height="8" alt="" class="arrow-next">
-							</span>
-						</td>
-					</tr>
-				</tfoot>
-				<tbody>
-					<tr><td></td><td></td><td></td><td></td><td></td><td>1</td><td>2</td></tr>
-					<tr><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
-					<tr><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td></tr>
-					<tr><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td></tr>
-					<tr><td class="l"><a href="#">24</a></td><td>25</td><td>26</td><td>27</td><td>28</td><td></td><td></td></tr>
-				</tbody>
-			</table>
-			<div class="sidebox" id="tagcloud">
-				<h2>Tags</h2>
-				<div class="pad">
-					<ul class="nobullets clearfix">
-						<li class="size1"><a href="#" rel="tag">Apache</a></li>
-						<li class="size1"><a href="#" rel="tag">Giải thuật</a></li>
-						<li class="size1"><a href="#" rel="tag">html</a></li>
-						<li class="size1"><a href="#" rel="tag">PHP</a></li>
-						<li class="size1"><a href="#" rel="tag">truyện hài</a></li>
-						<li class="size1"><a href="#" rel="tag">virtualhost</a></li>
-						<li class="size1"><a href="#" rel="tag">Vui vui</a></li>
-					</ul>
-				</div>
-			</div>
+			
 		</div>
 	</div>
 </template>
@@ -293,7 +225,6 @@
 </section>
 </template>
 
-
 <template name="sidebox">
 <div class="sidebox" id="{{sidebox_id}}">
 	<h2>{{sidebox_title}}</h2>
@@ -305,6 +236,29 @@
 
 <template name="admin">
 	<h1>Administrator</h1>
+	<ul class="nav nav-tabs">
+	  <li class="active">
+	    <a href="/admin/posts">List posts</a>
+	  </li>
+	  <li><a href="/admin/users">List users</a></li>
+	  <li><a href="/admin/tags">List tags</a></li>
+	</ul>
+	<table class="table">
+		<thead>
+			<tr><th>#</th><th>title</th><th>create time</th><th>actions</th></tr>
+		</thead>
+		<tbody>
+			{{#each posts}}
+			<tr>
+				<td>{{no}}</td><td>{{title}}</td><td>{{created_time}}</td>
+				<td><a href="/admin/publish/{{_id}}">{{#if publish}}unpublish{{else}}publish{{/if}}</a>/
+				<a href="/admin/view/{{_id}}">view</a>/
+				<a href="/admin/edit/{{_id}}">edit</a>/
+				<a href="/admin/delete/{{_id}}">delete</a></td>
+			</tr>
+			{{/each}}
+		</tbody>
+	</table>
 </template>
 <template name="about">
 Nothing ^^

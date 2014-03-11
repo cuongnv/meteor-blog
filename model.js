@@ -29,6 +29,15 @@ createNewPost = function(options){
 	Meteor.call('createNewPost', _.extend({_id:id}, options));
 	return id;
 }
+deletePost = function(id){
+	Meteor.call('deletePost', id);
+}
+publishPost = function(id){
+	Meteor.call('publishPost', id);
+}
+updatePost = function(options){
+	Meteor.call('updatePost', options);
+}
 
 Meteor.methods({
 	createNewPost:function(options){
@@ -57,5 +66,46 @@ Meteor.methods({
 			 comment:[]
 		});
 		
-	}
+	},
+	deletePost:function(id){
+		check(id, String);
+		if(id.length == 0) return;
+		if(!this.userId){
+			throw new Meteor.Error(403, "You must be logged in");
+		}
+		
+		Post.remove({_id:id});
+	},
+	updatePost:function(options){
+		check(options, {
+			title:NonEmptyString,
+			content:NonEmptyString,
+			publish:Match.Optional(Boolean),
+			_id:NonEmptyString,
+			tags:Match.Optional(Array),
+			markdown:NonEmptyString
+		});
+		if( !this.userId){
+			throw new Meteor.Error(403, "You must be logged in");
+		}
+		Post.update({_id:options._id}, {$set:{
+			title:options.title,
+			content:options.content,
+			publish:options.publish,
+			tags:options.tags,
+			markdown:options.markdown
+		}});
+		
+	},
+	publishPost:function(id){
+		check(id, String);
+		if(id.length == 0) return;
+		if(!this.userId){
+			throw new Meteor.Error(403, "You must be logged in");
+		}
+		p = Post.findOne({_id:id});
+		if(p){
+			Post.update({_id:id}, {$set:{publish:!p.publish}});
+		}
+	}	
 });
