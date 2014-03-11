@@ -1,0 +1,13 @@
+#wrapper{
+	width:100%;
+}
+.cg-editor{
+	float:left;
+	width:50%;
+}
+#preview{
+	float:right;
+	width:45%;
+	padding:2%;
+	border:1px solid black;
+}
