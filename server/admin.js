@@ -16,3 +16,6 @@ Meteor.publish("posts", function(){
 Meteor.publish("tags", function(){
 	return Tag.find({});
 });
+Meteor.publish('settings', function(){
+	return SiteSettings.find({});
+});

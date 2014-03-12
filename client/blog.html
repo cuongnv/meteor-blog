@@ -1,6 +1,6 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Nguyễn Văn Cường - Nothing Is Impossible</title>
+	<title>Share to be shared</title>
 	<link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" href="/css/main.css" type="text/css">
@@ -21,7 +21,7 @@
 				<div id="header">
 					<a href="/" id="logo" tabindex="0">
 						<img src="/imgs/logo.png" alt="" width="35" height="35">
-						<span id="site-title">Share to be shared</span>
+						<span id="site-title">{{sites.site_name}}</span>
 					</a>
 					<ul id="loginsignup">
 						<li>
@@ -36,15 +36,13 @@
 				<div id="wrap4">
 					<div id="top" class="top-blog">
 						<div id="top2">
-							<h1><span>Nothing Is Impossible</span></h1>
-								<p id="subtitle"><span>-Klark Kent-</span>
+							<h1><span>{{sites.quote}}</span></h1>
+								<p id="subtitle"><span>{{sites.nick_name}}</span>
 							</p>
 						</div>
 						<div id="menu">
 							<ul>
-								<li id="menu_blog"><a href="/"><span>Home</span></a></li>
-								<!-- <li id="menu_friends"><a href="#"><span>Friends</span></a></li>
-								-->
+								<li id="menu_blog"><a class="active" href="/"><span>Home</span></a></li>
 								{{#if currentUser}}
 								<li id="menu_about"><a href="/post"><span>Create new post</span></a></li>
 								<li id="menu_about"><a href="/admin"><span>Admin</span></a></li>
@@ -162,7 +160,7 @@
 		<span class="postcomments">
 			<a href="#">
 			{{#if post_num_of_comments}}
-				{{post_num_of_comments}}
+				{{post_num_of_comments}} comments
 			{{else}}
 				No commemt
 			{{/if}}
@@ -190,15 +188,26 @@
 					<a href="/cuongnvbkict/"><img width="50" height="50" alt="" src="/imgs/avatar.png"></a>
 				</div>
 				<div class="addcomment">
-					<textarea rows="6" cols="40" id="comment" name="comment"></textarea>
+					<p class="error" id="c_error"></p>
+					<input type="hidden" value="{{_id}}" id="c_pid"/>
+					Email(*): <input type="text" class="span4" name="email" id="c_email"/><br/>
+					Comment(*):<textarea class="span5" rows="6" cols="40" id="c_comment" name="comment"></textarea>
 					<div id="addsmilies">
 						<img width="24" height="22" style="display:block;" id="addsmile" title="Smilies" alt="Smilies" src="/imgs/ui_smilies.gif">
 					</div>
-					<input type="submit" accesskey="s" value=" Post comment " name="submit" class="submit">
+					<input type="submit" accesskey="s" value=" Post comment " name="submit" class="submit" id="btn-comment">
 				</div>
 				<div class="clear"></div>
 			</form>
 		</div>
+		<br/>
+		<br/>
+		{{#each comment}}
+		<div class="w100 comment_row">
+			<b>{{email}}</b> says:<br/>
+			<p class="comment">{{content}}</p>
+		</div>
+		{{/each}}
 	</div>
 </div>
 {{>sidebar}}
@@ -273,13 +282,13 @@
 	<div id="admin_tags" class="admin_tab">
 		Tags
 	</div>
-	<div id="admin_settings" class="admin_tab">
+	<div id="admin_settings" class="admin_tab" data-id="{{sites._id}}">
 		<div class="row">
 			<div class="span2">
 				Site Name
 			</div>
 			<div class="span6">
-			<input type="text" name="site_name" id="sitename" value=""/>
+			<input type="text" name="site_name" id="sitename" value="{{sites.site_name}}"/>
 			</div>
 		</div>
 		<div class="row">
@@ -287,10 +296,26 @@
 				Absolute URL
 			</div>
 			<div class="span6">
-				<input type="text" name="absolute_url" id="absolute_url" value=""/>
+				<input type="text" name="absolute_url" id="absolute_url" value="{{sites.site_url}}"/>
 			</div>
 		</div>
-		<button class="btn">Save</button>
+		<div class="row">
+			<div class="span2">
+				Quote
+			</div>
+			<div class="span6">
+				<input type="text" name="quote" id="quote" value="{{sites.quote}}"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span2">
+				Nick name
+			</div>
+			<div class="span6">
+				<input type="text" name="nick_name" id="nick_name" value="{{sites.nick_name}}"/>
+			</div>
+		</div>
+		<button class="btn" id="settings-save">Save</button>
 	</div>
 </template>
 <template name="tagcloud">
@@ -306,8 +331,8 @@
 </div>
 </template>
 <template name="about">
-My name is Nguyen Van Cuong.
-I come from Vietnam.
-I love technology, and i create this blog just for fun and to train myself about meteorjs.
-Hope to make friend with you :)
+My name is Nguyen Van Cuong.<br/>
+I come from Vietnam.<br/>
+I love technology, and i create this blog just for fun and to train myself about meteorjs.<br/>
+Hope to make friend with you :)<br/>
 </template>

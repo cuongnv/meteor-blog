@@ -41,6 +41,9 @@ publishPost = function(id){
 updatePost = function(options){
 	Meteor.call('updatePost', options);
 }
+addComment = function(options){
+	Meteor.call('addComment', options);
+}
 
 Meteor.methods({
 	createNewPost:function(options){
@@ -149,5 +152,21 @@ Meteor.methods({
 		if(p){
 			Post.update({_id:id}, {$set:{publish:!p.publish}});
 		}
-	}	
+	},
+	addComment:function(options){
+		check(options, {
+			email:NonEmptyString,
+			content:NonEmptyString,
+			_id:NonEmptyString
+		});
+		if(!this.userId){
+			throw new Meteor.Error(403, "You must be logged in");
+		}
+		Post.update({_id:options._id}, {$push:{comment:{
+			email:options.email, 
+			content:options.content,
+			created_time:Date.now()
+			}}});
+	}
+	
 });

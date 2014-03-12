@@ -10,3 +10,11 @@ color:#0087CC;
 .admin_tab{
 	display:none;
 }
+.comment_row{
+	border: 1px solid #EEEEEE;
+	padding:5px;
+	margin:5px;
+}
+.comment{
+	padding-left:10px;
+}

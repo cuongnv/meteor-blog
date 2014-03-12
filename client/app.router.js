@@ -1,19 +1,3 @@
-Meteor.startup(function(){
-	Hooks.init();
-	Deps.autorun(function () {
-		Meteor.subscribe('posts');
-		Meteor.subscribe('tags');
-	});
-});
-
-Hooks.onLoggedOut = function () {
-    // this runs right after a user logs out, on the client or server
-	
-}
-Hooks.onLoggedIn = function(){
-	Router.go('/');
-}
-
 Router.configure({
 	layoutTemplate:'layout',
 	notFoundTemplate:'not_found'
@@ -45,7 +29,9 @@ Router.map(function(){
 			return {'posts':listpost};
 		},
 		before:function(){
+			Session.set('blog_title', document.title);
 			this.subscribe('posts');
+			
 		}
 	});
 	this.route('editor', {
@@ -61,13 +47,18 @@ Router.map(function(){
 		path:'/post/:id',
 		template:'postdetail',
 		data:function(){
-			var p = Post.findOne({_id:this.params.id, publish:true}, {fields: {title:1, content:1, created_time:1}});
+			var p = Post.findOne({_id:this.params.id, publish:true}, {fields: {title:1, content:1, created_time:1, comment:1}});
+			document.title = p.title + ' | ' + Session.get('blog_title');
 			return {
 				title:p.title,
 				content:p.content,
 				created_time:new Date(p.created_time),
+				comment:p.comment,
 				_id:p._id
 			};
+		},
+		unload:function(){
+			document.title = Session.get('blog_title');
 		}
 	});
 	this.route('login', {
@@ -94,7 +85,8 @@ Router.map(function(){
 				p.no = i++; 
 				p.created_time = new Date(p.created_time);
 			});
-			return {posts:posts};
+			s = SiteSettings.findOne({});
+			return {posts:posts, sites:s};
 		}
 	});
 	this.route('admin_publish',{
@@ -170,136 +162,3 @@ Router.map(function(){
 	
 	
 });
-Template.layout.events({
-	'click #btn-logout':function(e, t){
-		Meteor.logout();
-	},
-	'click #btn-login':function(e, t){
-		Router.go('/login');
-	}
-});
-Template.login.events({
-	'click #btn-login':function(event, t){
-		event.preventDefault();
-		var username = t.find('#username').value,
-		password = t.find('#password').value;
-		Meteor.loginWithPassword(username, password, function(err){
-			if(err){
-				//TODO: error here
-				
-			}else{
-				
-			}
-		});
-	},
-	'click #btn-register':function(event, t){
-		event.preventDefault();
-		var username = t.find('#username').value,
-		password = t.find('#password').value;
-		Accounts.createUser({username: username, password : password, profile:{}}, function(err){
-			if(err){
-				//TODO:error
-			}else{
-				
-			}
-		});
-	}
-	
-});
-Template.create_post.events({
-	'keypress #entry-markdown':function(event, template){
-		if(window.isAttack == null || window.isAttack == false){
-			$('#entry-markdown').cgEditor({
-				'previewTag':$('.rendered-markdown'),
-				'enableTab':true,
-			});
-			window.isAttack = true;
-		}
-	},
-	'click button#btn-save':function(event, template){
-		tags = $('#ptag').val().trim().split(',');
-		for(i = 0; i < tags.length; i++){
-			tags[i] = tags[i].trim(); 
-		}
-		if(tags.length == 0) tags.push('uncategory');
-		
-		window.isAttack = false;
-		
-		if($('#pid').val().trim() == ''){
-			id = createNewPost({
-				title:$('#ptitle').val().trim(),
-				content: $('.rendered-markdown').html().trim(),
-				markdown:$("#entry-markdown").val(),
-				tags:tags,
-				publish:true
-			});
-			
-			Router.go('/');
-		}else{
-			updatePost({
-				title:$('#ptitle').val().trim(),
-				content: $('.rendered-markdown').html().trim(),
-				markdown:$("#entry-markdown").val(),
-				tags:tags,
-				publish:true,
-				_id:$('#pid').val().trim()
-			});
-			
-			Router.go('/admin')
-		}
-		
-	},
-	'click button#btn-saveasdraft':function(e, t){
-		tags = $('#ptag').val().trim().split(',');
-		for(i = 0; i < tags.length; i++){
-			tags[i] = tags[i].trim(); 
-		}
-		if(tags.length == 0) tags.push('uncategory');
-		
-		window.isAttack = false;
-		
-		if($('#pid').val().trim() == ''){
-			createNewPost({
-				title:$('#ptitle').val().trim(),
-				content: $('.rendered-markdown').html().trim(),
-				markdown:$("#entry-markdown").val(),
-				tags:tags,
-				publish:false
-			});
-			
-			Router.go('/');
-		}else{
-			//update
-			updatePost({
-				title:$('#ptitle').val().trim(),
-				content: $('.rendered-markdown').html().trim(),
-				markdown:$("#entry-markdown").val(),
-				tags:tags,
-				publish:false,
-				_id:$('#pid').val().trim()
-			});
-			Router.go('/admin');
-		}
-	}
-});
-Template.admin.events({
-	'click ul.nav li a':function(e, t){
-		e.preventDefault();
-		$('ul.nav li').removeClass('active');
-		$(e.target).parent().addClass('active');
-		tab = $(e.target).attr('href');
-		$('.admin_tab').hide();
-		if(tab == '/admin/posts'){
-			$('#admin_posts').show();
-		}else if(tab == '/admin/users'){
-			$('#admin_users').show();
-		}else if(tab == '/admin/tags'){
-			$('#admin_tags').show();
-		}else if(tab == '/admin/settings'){
-			$('#admin_settings').show();
-		}
-	}
-});
-Template.tagcloud.tags=function(){
-	return Tag.find({}).fetch();
-}
