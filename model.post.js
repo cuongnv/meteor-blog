@@ -1,11 +1,14 @@
-//Post model
-// fields: _id: string
-// title : text
-// content: long text
-// created_time: int
-// author:reference to user
-// tags: array
-// publish: int 0|1
+/**Post model
+ fields: 
+ - _id: string
+ - title : text
+ - content: long text
+ - created_time: int
+ - author:reference to user
+ - tags: array
+ - comment: array [{time, email, content}]
+ - publish: int 0|1
+*/
 Post = new Meteor.Collection('posts');
 
 var NonEmptyString = Match.Where(function(x){
@@ -53,6 +56,21 @@ Meteor.methods({
 			throw new Meteor.Error(403, "You must be logged in");
 		}
 		
+		//insert tag
+		_.each(options.tags, function(t){
+			t = t.trim();
+			tag = Tag.findOne({name:t});
+			if(tag == null){
+				Tag.insert({
+					name:t,
+					slug:t.replace(new RegExp('[ ]', 'g'), '-'),
+					weight:1
+				});
+			}else{
+				Tag.update({name:t}, {$inc:{weight:1}});
+			}
+		});
+		
 		var id = options._id || Random.id();
 		Post.insert({
 			 _id: id,
@@ -73,6 +91,12 @@ Meteor.methods({
 		if(!this.userId){
 			throw new Meteor.Error(403, "You must be logged in");
 		}
+		p = Post.findOne({_id:id});
+		//insert tag
+		_.each(p.tags, function(t){
+			t = t.trim();
+			Tag.update({name:t}, {$inc:{weight:-1}});
+		});
 		
 		Post.remove({_id:id});
 	},
@@ -88,6 +112,24 @@ Meteor.methods({
 		if( !this.userId){
 			throw new Meteor.Error(403, "You must be logged in");
 		}
+		
+		//insert new tag, decrease remove tags
+		p = Post.findOne({_id:options._id});
+		_.each(p.tags, function(t){
+			t = t.trim();
+			if(options.tags.indexOf(t) == -1){
+				Tag.update({name:t}, {$inc:{weight:-1}});
+			}else{
+				tag = Tag.findOne({name:t});
+				if(tag == null){
+					Tag.insert({
+						name:t,
+						slug:t.replace(new RegExp('[ ]', 'g'), '-'),
+						weight:1
+					});
+				}
+			}
+		});
 		Post.update({_id:options._id}, {$set:{
 			title:options.title,
 			content:options.content,

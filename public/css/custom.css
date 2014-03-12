@@ -7,3 +7,6 @@ color:#0087CC;
     font-weight: bold;
     padding-left: 8px;
 }
+.admin_tab{
+	display:none;
+}

@@ -143,7 +143,7 @@
 					</div>
 				</form>
 			</div>
-			
+			{{>tagcloud}}
 		</div>
 	</div>
 </template>
@@ -242,24 +242,72 @@
 	  </li>
 	  <li><a href="/admin/users">List users</a></li>
 	  <li><a href="/admin/tags">List tags</a></li>
+	  <li><a href="/admin/settings">Settings</a></li>
 	</ul>
-	<table class="table">
-		<thead>
-			<tr><th>#</th><th>title</th><th>create time</th><th>actions</th></tr>
-		</thead>
-		<tbody>
-			{{#each posts}}
-			<tr>
-				<td>{{no}}</td><td>{{title}}</td><td>{{created_time}}</td>
-				<td><a href="/admin/publish/{{_id}}">{{#if publish}}unpublish{{else}}publish{{/if}}</a>/
-				<a href="/admin/view/{{_id}}">view</a>/
-				<a href="/admin/edit/{{_id}}">edit</a>/
-				<a href="/admin/delete/{{_id}}">delete</a></td>
-			</tr>
+	<div id="admin_posts" class="admin_tab" style="display:block">
+		<table class="table">
+			<thead>
+				<tr><th>#</th><th>title</th><th>create time</th><th>actions</th></tr>
+			</thead>
+			<tbody>
+				{{#each posts}}
+				<tr>
+					<td>{{no}}</td><td>{{title}}</td><td>{{created_time}}</td>
+					<td><a href="/admin/publish/{{_id}}">{{#if publish}}unpublish{{else}}publish{{/if}}</a>/
+					<a href="/admin/view/{{_id}}">view</a>/
+					<a href="/admin/edit/{{_id}}">edit</a>/
+					<a href="/admin/delete/{{_id}}">delete</a></td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+	<div id="admin_users" class="admin_tab">
+		<div class="row">
+			<div class="span6">
+			</div>
+			<div class="span2">
+			</div>
+		</div>
+	</div>
+	<div id="admin_tags" class="admin_tab">
+		Tags
+	</div>
+	<div id="admin_settings" class="admin_tab">
+		<div class="row">
+			<div class="span2">
+				Site Name
+			</div>
+			<div class="span6">
+			<input type="text" name="site_name" id="sitename" value=""/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span2">
+				Absolute URL
+			</div>
+			<div class="span6">
+				<input type="text" name="absolute_url" id="absolute_url" value=""/>
+			</div>
+		</div>
+		<button class="btn">Save</button>
+	</div>
+</template>
+<template name="tagcloud">
+<div class="sidebox" id="tagcloud">
+	<h2>Tags</h2>
+	<div class="pad">
+		<ul class="nobullets clearfix">
+			{{#each tags}}
+			<li class="size{{weight}}"><a href="/tag/{{slug}}" rel="tag">{{name}}</a></li>
 			{{/each}}
-		</tbody>
-	</table>
+		</ul>
+	</div>
+</div>
 </template>
 <template name="about">
-Nothing ^^
+My name is Nguyen Van Cuong.
+I come from Vietnam.
+I love technology, and i create this blog just for fun and to train myself about meteorjs.
+Hope to make friend with you :)
 </template>

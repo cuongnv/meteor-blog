@@ -2,6 +2,7 @@ Meteor.startup(function(){
 	Hooks.init();
 	Deps.autorun(function () {
 		Meteor.subscribe('posts');
+		Meteor.subscribe('tags');
 	});
 });
 
@@ -26,12 +27,18 @@ Router.map(function(){
 			posts = Post.find({publish:true},{limit:5});
 			listpost = [];
 			posts.forEach(function(post){
+				content = post.content;
+				if(content.length >= 300){
+					content = post.content.substr(0, 300);
+					content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
+					content += "...<br/><a href=\"/post/" + post._id+"\">Read more>>";
+				}
 				listpost.push({
 					post_id:post._id,
 					post_url:"/post/" + post._id,
 					post_title:post.title,
 					post_datetime:new Date(post.created_time),
-					post_content:post.content,
+					post_content: content,
 					post_num_of_comments:post.comment.length
 				});
 			});
@@ -79,7 +86,6 @@ Router.map(function(){
 			if(Meteor.user() == null){
 				this.redirect('login');
 			}
-			this.subscribe('allposts');
 		},
 		data:function(){
 			posts = Post.find({}, {fields: {title:1, created_time:1, publish:1}}).fetch();
@@ -106,7 +112,7 @@ Router.map(function(){
 			return {
 				title:p.title,
 				content:p.content,
-				created_time:p.created_time,
+				created_time:new Date(p.created_time),
 				_id:p._id
 			};
 		}
@@ -135,6 +141,33 @@ Router.map(function(){
 		path:'/about',
 		template:'about'
 	});
+	this.route('tag',{
+		path:'/tag/:slug',
+		template:'listpost',
+		data:function(){
+			t = Tag.findOne({slug:this.params.slug});
+			posts = Post.find({publish:true, tags:{$in:[t.name]}});
+			listpost = [];
+			posts.forEach(function(post){
+				content = post.content;
+				if(content.length >= 300){
+					content = post.content.substr(0, 300);
+					content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
+					content += "...<br/><a href=\"/post/" + post._id+"\">Read more>>";
+				}
+				listpost.push({
+					post_id:post._id,
+					post_url:"/post/" + post._id,
+					post_title:post.title,
+					post_datetime:new Date(post.created_time),
+					post_content: content,
+					post_num_of_comments:post.comment.length
+				});
+			});
+			return {'posts':listpost};
+		}
+	})
+	
 	
 });
 Template.layout.events({
@@ -175,7 +208,7 @@ Template.login.events({
 });
 Template.create_post.events({
 	'keypress #entry-markdown':function(event, template){
-		if(window.isAttack == null){
+		if(window.isAttack == null || window.isAttack == false){
 			$('#entry-markdown').cgEditor({
 				'previewTag':$('.rendered-markdown'),
 				'enableTab':true,
@@ -184,48 +217,56 @@ Template.create_post.events({
 		}
 	},
 	'click button#btn-save':function(event, template){
+		tags = $('#ptag').val().trim().split(',');
+		for(i = 0; i < tags.length; i++){
+			tags[i] = tags[i].trim(); 
+		}
+		if(tags.length == 0) tags.push('uncategory');
+		
+		window.isAttack = false;
+		
 		if($('#pid').val().trim() == ''){
-			if($('#ptag').val().trim() == ''){
-				id = createNewPost({
-					title:$('#ptitle').val().trim(),
-					content: $('.rendered-markdown').html().trim(),
-					markdown:$("#entry-markdown").val(),
-					tags:['uncategory'],
-					publish:true
-				});
-			}else{
-				id = createNewPost({
-					title:$('#ptitle').val().trim(),
-					content: $('.rendered-markdown').html().trim(),
-					markdown:$("#entry-markdown").val(),
-					tags:$('#ptag').val().trim().split(','),
-					publish:true
-				});
-			}
+			id = createNewPost({
+				title:$('#ptitle').val().trim(),
+				content: $('.rendered-markdown').html().trim(),
+				markdown:$("#entry-markdown").val(),
+				tags:tags,
+				publish:true
+			});
+			
 			Router.go('/');
 		}else{
-			//update
 			updatePost({
 				title:$('#ptitle').val().trim(),
 				content: $('.rendered-markdown').html().trim(),
 				markdown:$("#entry-markdown").val(),
-				tags:$('#ptag').val().trim().split(','),
+				tags:tags,
 				publish:true,
 				_id:$('#pid').val().trim()
 			});
+			
 			Router.go('/admin')
 		}
 		
 	},
 	'click button#btn-saveasdraft':function(e, t){
+		tags = $('#ptag').val().trim().split(',');
+		for(i = 0; i < tags.length; i++){
+			tags[i] = tags[i].trim(); 
+		}
+		if(tags.length == 0) tags.push('uncategory');
+		
+		window.isAttack = false;
+		
 		if($('#pid').val().trim() == ''){
 			createNewPost({
 				title:$('#ptitle').val().trim(),
 				content: $('.rendered-markdown').html().trim(),
 				markdown:$("#entry-markdown").val(),
-				tags:$('#ptag').val().split(','),
+				tags:tags,
 				publish:false
 			});
+			
 			Router.go('/');
 		}else{
 			//update
@@ -233,7 +274,7 @@ Template.create_post.events({
 				title:$('#ptitle').val().trim(),
 				content: $('.rendered-markdown').html().trim(),
 				markdown:$("#entry-markdown").val(),
-				tags:$('#ptag').val().trim().split(','),
+				tags:tags,
 				publish:false,
 				_id:$('#pid').val().trim()
 			});
@@ -246,5 +287,19 @@ Template.admin.events({
 		e.preventDefault();
 		$('ul.nav li').removeClass('active');
 		$(e.target).parent().addClass('active');
+		tab = $(e.target).attr('href');
+		$('.admin_tab').hide();
+		if(tab == '/admin/posts'){
+			$('#admin_posts').show();
+		}else if(tab == '/admin/users'){
+			$('#admin_users').show();
+		}else if(tab == '/admin/tags'){
+			$('#admin_tags').show();
+		}else if(tab == '/admin/settings'){
+			$('#admin_settings').show();
+		}
 	}
 });
+Template.tagcloud.tags=function(){
+	return Tag.find({}).fetch();
+}

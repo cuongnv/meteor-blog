@@ -11,6 +11,8 @@ Meteor.publish("posts", function(){
 		return Post.find({$or:[{"publish":true}]});
 	}else{
 		return Post.find({});
-	}
-	
+	}	
+});
+Meteor.publish("tags", function(){
+	return Tag.find({});
 });
