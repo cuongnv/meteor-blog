@@ -132,15 +132,7 @@
 						<img src="/imgs/avatar.png" width="220" height="165" alt="photo"></a>
 				</div>
 			</div>
-			<div id="blogsearch" class="sidebox">
-				<label for="searchbox" class="h2">Blog search</label>
-				<form action="" method="get">
-					<div class="pad">
-						<input type="text" name="search" value="" id="searchbox" maxlength="128">
-						<input type="submit" value="search" id="submitsearch">
-					</div>
-				</form>
-			</div>
+			{{>searchbox}}
 			{{>tagcloud}}
 		</div>
 	</div>
@@ -160,7 +152,7 @@
 		<span class="postcomments">
 			<a href="#">
 			{{#if post_num_of_comments}}
-				{{post_num_of_comments}} comments
+				{{post_num_of_comments}} comment(s)
 			{{else}}
 				No commemt
 			{{/if}}
@@ -256,12 +248,14 @@
 	<div id="admin_posts" class="admin_tab" style="display:block">
 		<table class="table">
 			<thead>
-				<tr><th>#</th><th>title</th><th>create time</th><th>actions</th></tr>
+				<tr><th>#</th><th>title</th><th>Num of comments</th><th>create time</th><th>actions</th></tr>
 			</thead>
 			<tbody>
 				{{#each posts}}
 				<tr>
-					<td>{{no}}</td><td>{{title}}</td><td>{{created_time}}</td>
+					<td>{{no}}</td><td>{{title}}</td>
+					<td>{{comment.length}}</td>
+					<td>{{created_time}}</td>
 					<td><a href="/admin/publish/{{_id}}">{{#if publish}}unpublish{{else}}publish{{/if}}</a>/
 					<a href="/admin/view/{{_id}}">view</a>/
 					<a href="/admin/edit/{{_id}}">edit</a>/
@@ -330,9 +324,34 @@
 	</div>
 </div>
 </template>
+<template name="search">
+<div id="mainwrap">
+	Results of searching <b>"{{searchQuery}}"</b>:<br/>
+	<div id="main">
+	{{#each posts}}
+      {{> post}}
+    {{/each}}
+    </div>
+</div>
+{{>sidebar}}
+</template>
+<template name="searchbox">
+<div id="blogsearch" class="sidebox">
+	<label for="searchbox" class="h2">Blog search</label>
+	<form action="" method="get">
+		<div class="pad">
+			<input type="text" name="search" value="" id="searchbox" maxlength="128">
+			<input type="submit" value="search" id="submitsearch">
+		</div>
+	</form>
+</div>
+</template>
 <template name="about">
+<h2>Welcome to my blog!</h2>
 My name is Nguyen Van Cuong.<br/>
 I come from Vietnam.<br/>
 I love technology, and i create this blog just for fun and to train myself about meteorjs.<br/>
-Hope to make friend with you :)<br/>
+In the future, I will write some post related to technology which i have learned.<br/>
+KL.<br/>
+P/S: Hope to make friend with you :)<br/>
 </template>

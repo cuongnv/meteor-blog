@@ -50,7 +50,7 @@ Template.create_post.events({
 	'click button#btn-save':function(event, template){
 		tags = $('#ptag').val().trim().split(',');
 		for(i = 0; i < tags.length; i++){
-			tags[i] = tags[i].trim(); 
+			tags[i] = tags[i].trim().toLowerCase(); 
 		}
 		if(tags.length == 0) tags.push('uncategory');
 		
@@ -83,7 +83,7 @@ Template.create_post.events({
 	'click button#btn-saveasdraft':function(e, t){
 		tags = $('#ptag').val().trim().split(',');
 		for(i = 0; i < tags.length; i++){
-			tags[i] = tags[i].trim(); 
+			tags[i] = tags[i].trim().toLowerCase(); 
 		}
 		if(tags.length == 0) tags.push('uncategory');
 		
@@ -168,5 +168,15 @@ Template.postdetail.events({
 		$('#c_error').html('');
 		$('#c_email').val('');
 		$('#c_comment').val('');
+	}
+});
+Template.searchbox.events({
+	'click #submitsearch':function(e, t){
+		e.preventDefault();
+		if($('#searchbox').val().trim() != ''){
+			Session.set('searchQuery', $('#searchbox').val().trim());
+			Router.go('/search');
+		}
+		
 	}
 });

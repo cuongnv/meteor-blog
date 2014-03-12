@@ -1,3 +1,15 @@
+var arrayUnique = function (array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i].title === a[j].title)
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
 Router.configure({
 	layoutTemplate:'layout',
 	notFoundTemplate:'not_found'
@@ -61,6 +73,9 @@ Router.map(function(){
 			document.title = Session.get('blog_title');
 		}
 	});
+	this.route('post_detail_2', {
+		
+	});
 	this.route('login', {
 		path:'/login',
 		template:'login',
@@ -79,7 +94,7 @@ Router.map(function(){
 			}
 		},
 		data:function(){
-			posts = Post.find({}, {fields: {title:1, created_time:1, publish:1}}).fetch();
+			posts = Post.find({}, {fields: {title:1, created_time:1, publish:1, comment:1}}).fetch();
 			i = 1;
 			_.each(posts, function(p){
 				p.no = i++; 
@@ -100,11 +115,12 @@ Router.map(function(){
 		path:'/admin/view/:id',
 		template:'postdetail',
 		data:function(){
-			var p = Post.findOne({_id:this.params.id}, {fields: {title:1, content:1, created_time:1}});
+			var p = Post.findOne({_id:this.params.id}, {fields: {title:1, content:1, created_time:1, comment:1}});
 			return {
 				title:p.title,
 				content:p.content,
 				created_time:new Date(p.created_time),
+				comment:p.comment,
 				_id:p._id
 			};
 		}
@@ -158,7 +174,39 @@ Router.map(function(){
 			});
 			return {'posts':listpost};
 		}
-	})
+	});
+	this.route('search',{
+		path:'/search',
+		data:function(){
+			//TODO: improve later by using full-text search mongodb
+			searchQuery = Session.get('searchQuery');
+			searchQuery = searchQuery.trim().split(' '); 
+			posts = [];
+			searchQuery.forEach(function(s){
+				p = Post.find({title:{$regex:s}}).fetch();
+				posts = arrayUnique(posts.concat(p));
+			});
+			console.log(posts);
+			listpost = [];
+			posts.forEach(function(post){
+				content = post.content;
+				if(content.length >= 300){
+					content = post.content.substr(0, 300);
+					content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
+					content += "...<br/><a href=\"/post/" + post._id+"\">Read more>>";
+				}
+				listpost.push({
+					post_id:post._id,
+					post_url:"/post/" + post._id,
+					post_title:post.title,
+					post_datetime:new Date(post.created_time),
+					post_content: content,
+					post_num_of_comments:post.comment.length
+				});
+			});
+			return {searchQuery:searchQuery.join(' '),'posts':listpost};
+		}
+	});
 	
 	
 });
