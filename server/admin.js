@@ -19,3 +19,6 @@ Meteor.publish("tags", function(){
 Meteor.publish('settings', function(){
 	return SiteSettings.find({});
 });
+Meteor.publish("chatbox", function(){
+	return Chatbox.find({});
+});

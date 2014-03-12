@@ -18,3 +18,8 @@ color:#0087CC;
 .comment{
 	padding-left:10px;
 }
+#chat_content{
+	height:200px;
+	border:1px solid #EEEEEE;
+	overflow-x:scroll;
+}

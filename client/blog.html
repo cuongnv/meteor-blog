@@ -133,6 +133,7 @@
 				</div>
 			</div>
 			{{>searchbox}}
+			{{>chatbox}}
 			{{>tagcloud}}
 		</div>
 	</div>
@@ -346,12 +347,29 @@
 	</form>
 </div>
 </template>
+<template name="chatbox">
+<div id="chatbox" class="sidebox">
+	<label for="searchbox" class="h2">Chat box</label>
+	<div id="chat_content">
+	{{{chat_content}}}
+	</div>
+	<form action="" method="get">
+		<div class="pad">
+				<input type="text" name="chatmsg" value="" id="chatmsg">
+				<input type="submit" value="send" id="btn-chat">
+		</div>
+	</form>
+</div>
+</template>
 <template name="about">
 <h2>Welcome to my blog!</h2>
-My name is Nguyen Van Cuong.<br/>
+Let's get started by introducing myself<br/>
+Hi everybody, my name is Nguyen Van Cuong.<br/>
 I come from Vietnam.<br/>
-I love technology, and i create this blog just for fun and to train myself about meteorjs.<br/>
-In the future, I will write some post related to technology which i have learned.<br/>
+I am just curious person especially about new technology.<br/>
+Therefore, when i have learnt meteor I decided to make blog using it.<br/>
+<br/>
+In the future, I will write some posts relating to technology which i have learnt.<br/>
 KL.<br/>
 P/S: Hope to make friend with you :)<br/>
 </template>

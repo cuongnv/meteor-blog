@@ -1,6 +1,7 @@
 {
   "packages": {
     "iron-router": {},
-    "event-hooks": {}
+    "event-hooks": {},
+    "reactive-cookie": {}
   }
 }

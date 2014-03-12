@@ -180,3 +180,29 @@ Template.searchbox.events({
 		
 	}
 });
+Template.chatbox.chat_content = function(){
+	msgs = Chatbox.find({},{limit:10, sort:{created_time:-1}}).fetch();
+	str = '';
+	msgs.forEach(function(m){
+		str = '<span style="color:'+m.color+'">' + m.username + "</span>: " + m.text + '<br/>' + str; 
+	});
+	return str;
+};
+Template.chatbox.events({
+	'click #btn-chat':function(e, t){
+		e.preventDefault();
+		username = ReactiveCookie.get('username');
+		color = ReactiveCookie.get('color');
+		text = $('#chatmsg').val().trim().replace(/(<script[^>]*>|(<\/script>))/g,'');
+		if(text != ''){
+			insertChat({
+				username:username,
+				text:text,
+				color:color
+			});
+			$('#chat_content').append('<span style="color:'+color+'">' + username + "</span>: " + text + '<br/>');
+		}
+		$('#chatmsg').val('');
+		$("#chat_content").scrollTop($('#chat_content')[0].scrollHeight);		
+	}
+});

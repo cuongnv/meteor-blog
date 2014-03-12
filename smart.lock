@@ -3,7 +3,8 @@
   "dependencies": {
     "basePackages": {
       "iron-router": {},
-      "event-hooks": {}
+      "event-hooks": {},
+      "reactive-cookie": {}
     },
     "packages": {
       "iron-router": {
@@ -15,6 +16,11 @@
         "git": "https://github.com/BenjaminRH/meteor-event-hooks.git",
         "tag": "v1.4.3",
         "commit": "ba4f3d7887748458618d29615492906f0c88d31c"
+      },
+      "reactive-cookie": {
+        "git": "https://github.com/EtherPOS/reactive-cookie.git",
+        "tag": "v0.0.4",
+        "commit": "4ae7c42a374a7d2889eefb68df69f4e62b5986a2"
       }
     }
   }
