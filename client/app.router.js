@@ -20,7 +20,8 @@ Router.map(function(){
 		path:'/',
 		template:'listpost',
 		data:function(){
-			posts = Post.find({publish:true},{limit:5});
+			posts = Post.find({publish:true},{limit:5, sort:{modified_time:-1, created_time:-1}});
+			all_publish_posts = Post.find({publish:true}).count();
 			listpost = [];
 			posts.forEach(function(post){
 				content = post.content;
@@ -38,12 +39,56 @@ Router.map(function(){
 					post_num_of_comments:post.comment.length
 				});
 			});
-			return {'posts':listpost};
+			n = all_publish_posts%5;
+			pages=[];
+			if( n*5 < all_publish_posts ){
+				n = n+1;
+			}
+			for(i = 1; i <= n;i++){
+				pages.push({'p':i});
+			}
+			return {'posts':listpost, 'pages':pages};
 		},
 		before:function(){
-			Session.set('blog_title', document.title);
-			this.subscribe('posts');
+			Session.set('blog_title', document.title);			
+		}
+	});
+	this.route('list_post', {
+		path:'/list/:page',
+		template:'listpost',
+		data:function(){
+			posts = Post.find({publish:true},{limit:5, skip:(this.params.page-1)*5,sort:{modified_time:-1, created_time:-1}});
+			all_publish_posts = Post.find({publish:true}).count();
+			listpost = [];
+			posts.forEach(function(post){
+				content = post.content;
+				if(content.length >= 300){
+					content = post.content.substr(0, 300);
+					content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
+					content += "...<br/><a href=\"/post/" + post._id+"\">Read more>>";
+				}
+				listpost.push({
+					post_id:post._id,
+					post_url:"/post/" + post._id,
+					post_title:post.title,
+					post_datetime:new Date(post.created_time),
+					post_content: content,
+					post_num_of_comments:post.comment.length
+				});
+			});
 			
+			n = all_publish_posts%5;
+			pages=[];
+			if( n*5 < all_publish_posts ){
+				n = n+1;
+			}
+			for(i = 1; i <= n;i++){
+				pages.push({'p':i});
+			}
+			return {'posts':listpost, 'pages':pages};
+		},
+		before:function(){
+			Session.set('blog_title', document.title);			
 		}
 	});
 	this.route('editor', {
@@ -186,7 +231,6 @@ Router.map(function(){
 				p = Post.find({title:{$regex:s}}).fetch();
 				posts = arrayUnique(posts.concat(p));
 			});
-			console.log(posts);
 			listpost = [];
 			posts.forEach(function(post){
 				content = post.content;

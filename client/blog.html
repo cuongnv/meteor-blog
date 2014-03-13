@@ -113,6 +113,14 @@
 	{{#each posts}}
       {{> post}}
     {{/each}}
+    
+    <div class="pagination">
+	  <ul>
+	  {{#each pages}}
+	    <li><a href="/list/{{p}}">{{p}}</a></li>
+	    {{/each}}
+	  </ul>
+	</div>
     </div>
 </div>
 {{>sidebar}}

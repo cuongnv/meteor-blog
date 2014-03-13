@@ -81,6 +81,7 @@ Meteor.methods({
 			 content: options.content,
 			 markdown:options.markdown,
 			 created_time: Date.now(),
+			 modified_time: Date.now(),
 			 author: this.userId,
 			 tags: options.tags,
 			 publish: !!options.publish,
@@ -138,7 +139,8 @@ Meteor.methods({
 			content:options.content,
 			publish:options.publish,
 			tags:options.tags,
-			markdown:options.markdown
+			markdown:options.markdown,
+			modified_time: Date.now()
 		}});
 		
 	},
@@ -159,9 +161,9 @@ Meteor.methods({
 			content:NonEmptyString,
 			_id:NonEmptyString
 		});
-		if(!this.userId){
-			throw new Meteor.Error(403, "You must be logged in");
-		}
+//		if(!this.userId){
+//			throw new Meteor.Error(403, "You must be logged in");
+//		}
 		Post.update({_id:options._id}, {$push:{comment:{
 			email:options.email, 
 			content:options.content,
